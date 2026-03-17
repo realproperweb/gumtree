@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gumtree Link Checker • Fix Your Service Ad</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .tail-container { max-width: 1200px; margin: 0 auto; }
+        .result-item { transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        .result-item:nth-child(1) { animation-delay: 400ms; }
+        .result-item:nth-child(2) { animation-delay: 800ms; }
+        .result-item:nth-child(3) { animation-delay: 1200ms; }
+        .result-item:nth-child(4) { animation-delay: 1600ms; }
+        .result-item:nth-child(5) { animation-delay: 2000ms; }
+        .result-item:nth-child(6) { animation-delay: 2400ms; }
+        .spinner { animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .scan-line { position: absolute; top: 0; left: 0; width: 100%; height: 3px; background: linear-gradient(90deg, transparent, #22c55e, transparent); animation: scan 2s linear infinite; }
+        @keyframes scan { 0% { top: 0; } 100% { top: 100%; } }
+    </style>
+</head>
+<body class="bg-zinc-950 text-white">
+    <div class="tail-container min-h-screen flex flex-col">
+        <!-- HEADER -->
+        <header class="border-b border-zinc-800 bg-zinc-900">
+            <div class="max-w-5xl mx-auto px-6 py-6 flex items-center justify-between">
+                <div class="flex items-center gap-x-3">
+                    <div class="w-10 h-10 bg-emerald-500 rounded-2xl flex items-center justify-center text-2xl">🔍</div>
+                    <div>
+                        <h1 class="text-2xl font-bold tracking-tight">Gumtree Checker</h1>
+                        <p class="text-xs text-zinc-400 -mt-1">for Service Providers • South Africa</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-x-2 text-emerald-400 text-sm font-medium">
+                    <i class="fa-solid fa-circle-check"></i>
+                    <span>Instant Analysis</span>
+                </div>
+            </div>
+        </header>
+
+        <main class="flex-1 max-w-5xl mx-auto w-full px-6 py-12">
+            <!-- HERO / INPUT -->
+            <div class="text-center mb-12">
+                <div class="inline-flex items-center gap-x-2 bg-zinc-900 border border-emerald-500/30 rounded-3xl px-5 py-2 mb-6">
+                    <span class="text-emerald-400 text-sm font-medium flex items-center gap-x-1">
+                        <i class="fa-solid fa-bolt"></i> LIVE
+                    </span>
+                    <span class="text-zinc-400 text-sm">Gumtree.co.za Service Ads Only</span>
+                </div>
+                <h2 class="text-5xl font-bold tracking-tighter mb-4">Is your Gumtree ad losing customers?</h2>
+                <p class="text-xl text-zinc-400 max-w-2xl mx-auto">
+                    Paste your service listing link below. We'll instantly scan it and show you exactly what's missing.
+                </p>
+            </div>
+
+            <div class="max-w-2xl mx-auto">
+                <form id="checkerForm" class="relative">
+                    <div class="bg-zinc-900 border border-zinc-700 rounded-3xl p-3 flex items-center">
+                        <input 
+                            id="urlInput"
+                            type="url" 
+                            placeholder="https://www.gumtree.co.za/a-services/..." 
+                            class="flex-1 bg-transparent px-6 py-5 text-lg outline-none placeholder-zinc-500"
+                            required>
+                        <button 
+                            type="submit"
+                            id="checkBtn"
+                            class="bg-emerald-500 hover:bg-emerald-600 transition-all px-10 py-5 rounded-3xl font-semibold text-lg flex items-center gap-x-3">
+                            <span>CHECK NOW</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </div>
+                    <p class="text-center text-zinc-500 text-xs mt-3">Only works on gumtree.co.za service listings</p>
+                </form>
+            </div>
+
+            <!-- RESULTS SECTION -->
+            <div id="resultsSection" class="hidden mt-16">
+                <!-- Loading state -->
+                <div id="loadingState" class="text-center py-20">
+                    <div class="relative mx-auto w-24 h-24 border-8 border-zinc-700 border-t-emerald-500 rounded-full flex items-center justify-center spinner">
+                        <i class="fa-solid fa-magnifying-glass text-4xl text-emerald-400"></i>
+                    </div>
+                    <div class="mt-8">
+                        <div class="scan-line"></div>
+                        <p class="text-emerald-400 font-medium text-lg">Scanning your Gumtree listing...</p>
+                        <p class="text-zinc-400 text-sm mt-2">This takes about 3 seconds</p>
+                    </div>
+                </div>
+
+                <!-- Actual results -->
+                <div id="finalResults" class="hidden">
+                    <div class="bg-zinc-900 border border-zinc-700 rounded-3xl p-8">
+                        <!-- Score -->
+                        <div class="flex justify-between items-start mb-8">
+                            <div>
+                                <div class="text-emerald-400 text-sm font-medium flex items-center gap-x-2">
+                                    <i class="fa-solid fa-chart-pie"></i>
+                                    YOUR LISTING SCORE
+                                </div>
+                                <div class="text-7xl font-bold text-red-400">18/100</div>
+                                <div class="text-zinc-400">Poor • Needs urgent fix</div>
+                            </div>
+                            <div class="text-right">
+                                <div class="bg-red-500/10 text-red-400 text-xs font-bold px-4 py-1 rounded-2xl inline-block">
+                                    6 CRITICAL ISSUES FOUND
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Issues list -->
+                        <div class="space-y-5">
+                            <div class="result-item flex items-center gap-x-5 bg-zinc-950 border border-zinc-800 rounded-2xl p-6">
+                                <div class="w-10 h-10 bg-red-500/10 rounded-2xl flex items-center justify-center text-3xl">📸</div>
+                                <div class="flex-1">
+                                    <div class="font-semibold text-lg">No proper images</div>
+                                    <div class="text-zinc-400 text-sm">Only 0-1 blurry phone pics. Customers want clear, professional photos.</div>
+                                </div>
+                                <i class="fa-solid fa-xmark text-4xl text-red-500"></i>
+                            </div>
+
+                            <div class="result-item flex items-center gap-x-5 bg-zinc-950 border border-zinc-800 rounded-2xl p-6">
+                                <div class="w-10 h-10 bg-red-500/10 rounded-2xl flex items-center justify-center text-3xl">🏷️</div>
+                                <div class="flex-1">
+                                    <div class="font-semibold text-lg">No proper logo</div>
+                                    <div class="text-zinc-400 text-sm">No branded logo or business name header. Looks unprofessional.</div>
+                                </div>
+                                <i class="fa-solid fa-xmark text-4xl text-red-500"></i>
+                            </div>
+
+                            <div class="result-item flex items-center gap-x-5 bg-zinc-950 border border-zinc-800 rounded-2xl p-6">
+                                <div class="w-10 h-10 bg-red-500/10 rounded-2xl flex items-center justify-center text-3xl">📝</div>
+                                <div class="flex-1">
+                                    <div class="font-semibold text-lg">No detailed description + call to action</div>
+                                    <div class="text-zinc-400 text-sm">Short or missing benefits + no “Call/WhatsApp now” button text.</div>
+                                </div>
+                                <i class="fa-solid fa-xmark text-4xl text-red-500"></i>
+                            </div>
+
+                            <div class="result-item flex items-center gap-x-5 bg-zinc-950 border border-zinc-800 rounded-2xl p-6">
+                                <div class="w-10 h-10 bg-red-500/10 rounded-2xl flex items-center justify-center text-3xl">🌐</div>
+                                <div class="flex-1">
+                                    <div class="font-semibold text-lg">No website link</div>
+                                    <div class="text-zinc-400 text-sm">Customers can’t see your full services, prices or portfolio.</div>
+                                </div>
+                                <i class="fa-solid fa-xmark text-4xl text-red-500"></i>
+                            </div>
+
+                            <div class="result-item flex items-center gap-x-5 bg-zinc-950 border border-zinc-800 rounded-2xl p-6">
+                                <div class="w-10 h-10 bg-red-500/10 rounded-2xl flex items-center justify-center text-3xl">💬</div>
+                                <div class="flex-1">
+                                    <div class="font-semibold text-lg">Not sure if WhatsApp Business is activated</div>
+                                    <div class="text-zinc-400 text-sm">No verified business profile or quick replies set up.</div>
+                                </div>
+                                <i class="fa-solid fa-xmark text-4xl text-red-500"></i>
+                            </div>
+
+                            <div class="result-item flex items-center gap-x-5 bg-zinc-950 border border-zinc-800 rounded-2xl p-6">
+                                <div class="w-10 h-10 bg-red-500/10 rounded-2xl flex items-center justify-center text-3xl">📨</div>
+                                <div class="flex-1">
+                                    <div class="font-semibold text-lg">No autoresponder on WhatsApp</div>
+                                    <div class="text-zinc-400 text-sm">Customers message you and get no instant reply. You lose leads.</div>
+                                </div>
+                                <i class="fa-solid fa-xmark text-4xl text-red-500"></i>
+                            </div>
+                        </div>
+
+                        <!-- FIX CTA -->
+                        <div class="mt-12 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-3xl p-8 text-center relative overflow-hidden">
+                            <div class="absolute inset-0 bg-white/10"></div>
+                            <div class="relative">
+                                <div class="text-3xl font-bold mb-3">Fix everything with a proper website in 48 hours</div>
+                                <div class="text-xl text-emerald-950 mb-6">Professional design • Mobile friendly • WhatsApp integration • SEO for Gumtree traffic</div>
+                                
+                                <button onclick="contactWhatsApp()" 
+                                        class="bg-white hover:bg-zinc-100 text-emerald-600 font-bold text-2xl px-16 py-6 rounded-3xl flex items-center gap-x-4 mx-auto transition-all shadow-2xl">
+                                    <i class="fa-brands fa-whatsapp text-4xl"></i>
+                                    <span>WHATSAPP 068 912 4033 NOW</span>
+                                </button>
+                                
+                                <p class="text-emerald-950 text-sm mt-4">Pre-filled message: “Fix my website” + your Gumtree link</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Trust bar -->
+                    <div class="flex justify-center gap-x-8 mt-10 text-xs text-zinc-400">
+                        <div class="flex items-center gap-x-2">
+                            <i class="fa-solid fa-shield"></i>
+                            <span>100% Free scan</span>
+                        </div>
+                        <div class="flex items-center gap-x-2">
+                            <i class="fa-solid fa-clock"></i>
+                            <span>Used by 400+ SA service providers</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- FOOTER -->
+        <footer class="border-t border-zinc-800 py-8 text-center text-zinc-500 text-xs">
+            Built for service providers on Gumtree.co.za • Durban, South Africa<br>
+            This tool shows common problems that lose you jobs every day. Fix them → get more calls.
+        </footer>
+    </div>
+
+    <script>
+        // Tailwind script run
+        function initializeTailwind() {
+            // Already loaded via CDN
+        }
+
+        document.getElementById('checkerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const urlInput = document.getElementById('urlInput').value.trim();
+            
+            // Basic validation
+            if (!urlInput.includes('gumtree.co.za')) {
+                alert("❌ Please enter a valid Gumtree.co.za service listing link (example: https://www.gumtree.co.za/a-services/... )");
+                return;
+            }
+
+            // Hide form a bit, show loading
+            document.getElementById('checkBtn').innerHTML = `
+                <i class="fa-solid fa-spinner spinner mr-2"></i> SCANNING...
+            `;
+            document.getElementById('checkBtn').disabled = true;
+
+            // Show results container
+            const resultsSection = document.getElementById('resultsSection');
+            resultsSection.classList.remove('hidden');
+            resultsSection.scrollIntoView({ behavior: "smooth" });
+
+            // Fake loading time (realistic scan feel)
+            setTimeout(() => {
+                document.getElementById('loadingState').classList.add('hidden');
+                document.getElementById('finalResults').classList.remove('hidden');
+                
+                // Animate items in
+                const items = document.querySelectorAll('.result-item');
+                items.forEach((item, index) => {
+                    item.style.opacity = 0;
+                    setTimeout(() => {
+                        item.style.opacity = 1;
+                        item.style.transform = 'translateY(0)';
+                    }, 300 + (index * 150));
+                });
+            }, 2800);
+        });
+
+        // WhatsApp contact with pre-filled message
+        window.contactWhatsApp = function() {
+            const userUrl = document.getElementById('urlInput').value.trim();
+            const message = `Fix my website for my Gumtree listing!%0A%0A${encodeURIComponent(userUrl)}%0A%0APlease help me get more customers.`;
+            const whatsappUrl = `https://wa.me/27689124033?text=${message}`;
+            window.open(whatsappUrl, '_blank');
+        };
+
+        // Bonus: allow Enter key
+        document.getElementById('urlInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                document.getElementById('checkerForm').dispatchEvent(new Event('submit'));
+            }
+        });
+
+        // Auto-focus input
+        window.onload = function() {
+            document.getElementById('urlInput').focus();
+        };
+    </script>
+</body>
+</html>
